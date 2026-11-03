@@ -1,5 +1,10 @@
 # From Prompts to Trees: Effective LLM-Guided Tree Generation for Few-Shot Tabular Classification
-[![arXiv](https://img.shields.io/badge/arXiv-2610.10227-b31b1b.svg)](https://arxiv.org/abs/2610.10227)
+
+<p align="center">
+  <a href='https://arxiv.org/abs/2610.10227'><img src='https://img.shields.io/badge/Arxiv-2610.10227-b31b1b.svg?logo=arXiv'></a>
+  <!-- <a href=""><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fsun-hailong%2FLAMDA-PILOT&count_bg=%23FFA500&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visitors&edge_flat=false"></a> -->
+  <a href=""><img src="https://black.readthedocs.io/en/stable/_static/license.svg"></a>
+</p>
 
 This repository contains the official implementation of our EMNLP 2026 paper, **From Prompts to Trees: Effective LLM-Guided Tree Generation for Few-Shot Tabular Classification**.
 
