@@ -1,12 +1,13 @@
 # From Prompts to Trees: Effective LLM-Guided Tree Generation for Few-Shot Tabular Classification
+[![arXiv](https://img.shields.io/badge/arXiv-2610.10227-b31b1b.svg)](https://arxiv.org/abs/2610.10227)
 
 This repository contains the official implementation of our EMNLP 2026 paper, **From Prompts to Trees: Effective LLM-Guided Tree Generation for Few-Shot Tabular Classification**.
 
 ![Overview of the LLMTree framework](assets/framework.png)
 
-# Paper Link
 
-[arxiv](https://arxiv.org/abs/2610.10227)
+# Paper Link
+[arxiv link](https://arxiv.org/abs/2610.10227)
 
 # Data Preparation
 
@@ -71,6 +72,17 @@ python train.py \
 | `--exp-name`, `--output-dir` | Experiment name and output directory.      |
 
 
-# Cite
+# Citation
+```
+@misc{qiu2026promptstreeseffectivellmguided,
+      title={From Prompts to Trees: Effective LLM-Guided Tree Generation for Few-Shot Tabular Classification}, 
+      author={Yue Qiu and Zekang Du and Yiqun Diao and Bingsheng He and Qinbin Li},
+      year={2026},
+      eprint={2610.10227},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2610.10227}, 
+}
+```
 
-To be updated
+
