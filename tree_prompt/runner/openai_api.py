@@ -32,7 +32,7 @@ class OpenAIAPIRunner(Runner):
         
 
         for prompt in messages:
-            client = OpenAI(base_url=self.api_base, api_key=self.api_key)
+            client = OpenAI(base_url=self.api_base, api_key=self.api_key, timeout=getattr(self, "timeout", 60.0))
             stream = False
             max_tokens=2048
 
