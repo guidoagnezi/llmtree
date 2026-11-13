@@ -1,0 +1,159 @@
+name: bladder
+target: differentially diagnose urinary bladder cancer, cystitis, kidney cancer, prostate cancer, and uterus cancer based on clinical laboratory blood and urine test results and patient medical history
+desc: Clinical laboratory data of bladder cancer, cystitis, and other genitourinary/gynecological malignancies
+label_meaning: clinical diagnosis
+features:
+  - name: A/G Ratio
+    desc: Albumin to Globulin ratio in blood serum
+    type: float
+  - name: Albumin
+    desc: Serum albumin concentration (g/dL)
+    type: float
+  - name: Alk
+    desc: Serum alkaline phosphatase (ALP) level (U/L)
+    type: float
+  - name: ALT (GPT)
+    desc: Alanine aminotransferase / glutamic pyruvic transaminase in blood (U/L)
+    type: float
+  - name: AST (GOT)
+    desc: Aspartate aminotransferase / glutamic oxaloacetic transaminase in blood (U/L)
+    type: float
+  - name: BUN
+    desc: Blood urea nitrogen concentration (mg/dL)
+    type: float
+  - name: Calcium
+    desc: Serum calcium concentration (mg/dL)
+    type: float
+  - name: Chloride
+    desc: Serum chloride concentration (mmol/L)
+    type: float
+  - name: Creatinine
+    desc: Serum creatinine concentration (mg/dL)
+    type: float
+  - name: Direct Bilirubin
+    desc: Conjugated (direct) bilirubin concentration in blood (mg/dL)
+    type: float
+  - name: Estimated GFR
+    desc: Estimated glomerular filtration rate (mL/min/1.73m2)
+    type: float
+  - name: Glucose AC
+    desc: Fasting blood glucose (ante cibum) concentration (mg/dL)
+    type: float
+  - name: Nitrite
+    desc: Urine nitrite dipstick test result (0 = negative, >0 = positive)
+    type: float
+  - name: Urine occult Blood
+    desc: Urine occult blood dipstick severity score (0 = negative, 0.5 to 4 = trace to 4+)
+    type: float
+  - name: pH
+    desc: Urine pH level
+    type: float
+  - name: Potassium
+    desc: Serum potassium concentration (mmol/L)
+    type: float
+  - name: Sodium
+    desc: Serum sodium concentration (mmol/L)
+    type: float
+  - name: Specific Gravity
+    desc: Urine specific gravity
+    type: float
+  - name: Strip WBC
+    desc: Urine leukocyte esterase / white blood cell dipstick strip score (0 = negative, 0.5 to 3 = trace to 3+)
+    type: float
+  - name: Total Bilirubin
+    desc: Total serum bilirubin concentration (mg/dL)
+    type: float
+  - name: Total Cholesterol
+    desc: Total serum cholesterol concentration (mg/dL)
+    type: float
+  - name: Total Protein
+    desc: Total serum protein concentration (g/dL)
+    type: float
+  - name: Triglyceride
+    desc: Serum triglyceride concentration (mg/dL)
+    type: float
+  - name: Urine epitheilum (UL)
+    desc: Urine epithelial cell concentration (/uL)
+    type: float
+  - name: Urine epithelium count
+    desc: Urine epithelial cell count per high-power field (/HPF)
+    type: float
+  - name: Uric acid
+    desc: Serum uric acid concentration (mg/dL)
+    type: float
+  - name: Urine Bilirubin
+    desc: Urine bilirubin dipstick score (0 = negative, 0.5 to 3 = trace to 3+)
+    type: float
+  - name: Urine Glucose
+    desc: Urine glucose dipstick score (0 = negative, 0.5 to 4 = trace to 4+)
+    type: float
+  - name: Urine Ketone
+    desc: Urine ketone dipstick score (0 = negative, 0.5 to 4 = trace to 4+)
+    type: float
+  - name: Urine Protein
+    desc: Urine protein dipstick score (0 = negative, 0.5 to 4 = trace to 4+)
+    type: float
+  - name: Urobilinogen
+    desc: Urine urobilinogen concentration (mg/dL)
+    type: float
+  - name: age
+    desc: Patient age (years)
+    type: int
+  - name: gender
+    desc: Patient biological sex (0 = female, 1 = male)
+    type: categorical
+    categories:
+      "0": "female (0)"
+      "1": "male (1)"
+  - name: Hyper1en1ion
+    desc: History of hypertension (0 = no, 1 = yes)
+    type: categorical
+    categories:
+      "0": "no (0)"
+      "1": "yes (1)"
+  - name: Diabe1es
+    desc: History of diabetes mellitus (0 = no, 1 = yes)
+    type: categorical
+    categories:
+      "0": "no (0)"
+      "1": "yes (1)"
+  - name: Smoking
+    desc: History of smoking (0 = no, 1 = yes)
+    type: categorical
+    categories:
+      "0": "no (0)"
+      "1": "yes (1)"
+  - name: Drinking
+    desc: History of alcohol consumption (0 = no, 1 = yes)
+    type: categorical
+    categories:
+      "0": "no (0)"
+      "1": "yes (1)"
+  - name: Bee1leNu1
+    desc: History of betel nut chewing (0 = no, 1 = yes)
+    type: categorical
+    categories:
+      "0": "no (0)"
+      "1": "yes (1)"
+  - name: FamilyHis1ory
+    desc: Family history of cancer (0 = no, 1 = yes)
+    type: categorical
+    categories:
+      "0": "no (0)"
+      "1": "yes (1)"
+labels:
+  - name: Cystitis
+    value: 0
+    desc: the patient has cystitis (benign urinary bladder inflammation)
+  - name: Kidney
+    value: 1
+    desc: the patient has kidney cancer (renal cell carcinoma)
+  - name: Prostate
+    value: 2
+    desc: the patient has prostate cancer
+  - name: UrinaryBladder
+    value: 3
+    desc: the patient has urinary bladder cancer
+  - name: Uterus
+    value: 4
+    desc: the patient has uterus cancer
