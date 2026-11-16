@@ -25,3 +25,14 @@ python train.py \
   --tau 0.35 \
   --openai-api-base https://api.openai.com/v1 \
   --model-name gpt-4o-mini
+
+  python train.py \
+  --config config/train/chatgpt-bladder.yml \
+  --exp-name bladder-single-v2 \
+  --strategy single \
+  --train-sizes 5 10 20 40 \
+  --num-tests-per-set 5 \
+  --max-depth 5 \
+  --tau 0.35 \
+  --openai-api-base https://api.openai.com/v1 \
+  --model-name gpt-4o-mini

@@ -104,6 +104,14 @@ class TrainStrategy:
         self.tree = DecisionTree(self.max_depth, self._meta.categories_map)
         self.tree.set_train_data(self.train_x)
 
+    def _majority_label(self, y_arr) -> tuple[int, set[int]]:
+        if y_arr is None or len(y_arr) == 0:
+            return -1, set()
+        counts = np.bincount(y_arr)
+        max_count = counts.max()
+        tied = {int(i) for i, c in enumerate(counts) if c == max_count}
+        return int(np.argmax(counts)), tied
+
     def step(self) -> tuple[bool, float]:
         next_split = self.tree.next_to_split()
 
@@ -119,18 +127,19 @@ class TrainStrategy:
                 f"Node depth ({depth}) has reached the maximum depth ({self.max_depth}), automatically set to a leaf node"
             )
 
+            tied_labels = set()
             if samples is not None and len(samples) > 0:
                 node_y = self.train_y[samples]
-                most_common_label = np.argmax(np.bincount(node_y))
+                most_common_label, tied_labels = self._majority_label(node_y)
                 logger.log(
-                    f"Based on sample label distribution, predict: {most_common_label}"
+                    f"Based on sample label distribution, predict: {most_common_label} (tied: {tied_labels})"
                 )
             else:
                 most_common_label = -1
                 logger.log("Node has no samples, initial set to unknown class (-1)")
 
             verified_prediction = self._llm_verify_leaf_node(
-                next_split, most_common_label
+                next_split, most_common_label, tied_labels=tied_labels
             )
             logger.log(f"LLM verification result: {verified_prediction}")
 
@@ -204,11 +213,11 @@ class TrainStrategy:
         if best_meta_rule is None:
             logger.log("No available meta rules, node frozen")
 
-            most_common_label = np.argmax(np.bincount(node_y))
-            logger.log(f"Node initial prediction: {most_common_label}")
+            most_common_label, tied_labels = self._majority_label(node_y)
+            logger.log(f"Node initial prediction: {most_common_label} (tied: {tied_labels})")
 
             verified_prediction = self._llm_verify_leaf_node(
-                next_split, most_common_label
+                next_split, most_common_label, tied_labels=tied_labels
             )
             logger.log(f"LLM verification result: {verified_prediction}")
 
@@ -229,11 +238,11 @@ class TrainStrategy:
                     f"Gain is 0 and non-shallow small sample case (depth={depth}, samples={len(samples)}), node frozen"
                 )
 
-                most_common_label = np.argmax(np.bincount(node_y))
-                logger.log(f"Node initial prediction: {most_common_label}")
+                most_common_label, tied_labels = self._majority_label(node_y)
+                logger.log(f"Node initial prediction: {most_common_label} (tied: {tied_labels})")
 
                 verified_prediction = self._llm_verify_leaf_node(
-                    next_split, most_common_label
+                    next_split, most_common_label, tied_labels=tied_labels
                 )
                 logger.log(f"LLM verification result: {verified_prediction}")
 
@@ -479,7 +488,7 @@ class TrainStrategy:
         path.reverse()
         return path
 
-    def _llm_verify_leaf_node(self, node_or_rules, prediction):
+    def _llm_verify_leaf_node(self, node_or_rules, prediction, tied_labels=None):
         path_rules = None
         if isinstance(node_or_rules, list):
             path_rules = node_or_rules
@@ -589,11 +598,19 @@ class TrainStrategy:
                 f"{tree_info}Supervision Prompt Token usage: input={token_info['prompt_tokens']}, output={token_info['completion_tokens']}, total={token_info['total_tokens']}"
             )
 
-            if highest_confidence >= self.tau and best_label != prediction:
+            if (highest_confidence >= self.tau or prediction == -1) and best_label != prediction:
                 logger.log(
                     f"LLM suggests replacing label: {prediction} -> {best_label} (confidence: {highest_confidence})"
                 )
                 return best_label
+            elif tied_labels and len(tied_labels) > 1 and confidence_scores:
+                best_tied = max(
+                    tied_labels, key=lambda l: confidence_scores.get(l, -1.0)
+                )
+                logger.log(
+                    f"LLM broke tie among {tied_labels}: {prediction} -> {best_tied} (confidence: {confidence_scores.get(best_tied, 0.0)})"
+                )
+                return best_tied
             else:
                 return prediction
 
@@ -654,7 +671,7 @@ class SingleStrategy(TrainStrategy):
 
     def _create_meta_rules_prompt(self, max_depth):
         return self.rule_template.render(
-            meta=self._meta, num_rules_required=max(10, 2**max_depth - 1)
+            meta=self._meta, num_rules_required=max(25, 2**max_depth - 1)
         )
 
     def _get_tree_rules(self) -> list[str]:
@@ -726,18 +743,19 @@ class SingleStrategy(TrainStrategy):
         samples = node.get_samples()
         is_small_sample = len(samples) <= 5
 
-        used_features = set()
+        used_splits = set()
         current = node
         while hasattr(current, "parent") and current.parent is not None:
             parent = current.parent
             if hasattr(parent, "split_feature") and parent.split_feature is not None:
-                used_features.add(parent.split_feature)
+                used_splits.add((parent.split_feature, parent.split_value))
             current = parent
 
         if len(meta_rules) == 0:
             return None, 0.0
 
         best_gain = -1
+        best_score = -1
         best_rule = None
         best_confidence = -1
 
@@ -753,7 +771,7 @@ class SingleStrategy(TrainStrategy):
 
             usable_rules = []
             for rule in meta_rules:
-                if rule.feature_idx in used_features:
+                if (rule.feature_idx, rule.split_value) in used_splits:
                     continue
 
                 if rule.confidence == confidence:
@@ -765,8 +783,6 @@ class SingleStrategy(TrainStrategy):
             logger.log(
                 f"Found {len(usable_rules)} usable rules (confidence: {confidence})"
             )
-
-            has_non_zero_gain = False
 
             for rule in usable_rules:
                 gain, left_gini, right_gini, left_mask, right_mask = (
@@ -796,21 +812,14 @@ class SingleStrategy(TrainStrategy):
                 ):
                     continue
 
-                if gain > 0:
-                    has_non_zero_gain = True
-
-                if gain > best_gain or (
-                    gain == best_gain and rule.confidence > best_confidence
+                score = gain * (0.7 + 0.03 * max(0, min(10, rule.confidence)))
+                if score > best_score or (
+                    score == best_score and rule.confidence > best_confidence
                 ):
+                    best_score = score
                     best_gain = gain
                     best_rule = rule
                     best_confidence = rule.confidence
-
-            if has_non_zero_gain:
-                logger.log(
-                    f"Found a rule with non-zero gain at confidence {confidence}"
-                )
-                break
 
         if is_small_sample and best_rule is None and best_small_sample_rule is not None:
             logger.log(
@@ -882,7 +891,7 @@ class LLMTForestStrategy(TrainStrategy):
         # an independently sampled sqrt-sized feature subspace before it asks
         # the LLM for rules.  Bags may overlap across trees.
         feature_count = self.all_meta.feature_count()
-        group_size = max(1, int(np.ceil(np.sqrt(feature_count))))
+        group_size = max(1, int(np.ceil(max(np.sqrt(feature_count), feature_count * 0.5))))
         rng = np.random.default_rng(self.random_seed)
         self.feature_groups = [
             rng.choice(feature_count, size=group_size, replace=False).tolist()

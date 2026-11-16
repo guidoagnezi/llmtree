@@ -1,159 +1,159 @@
 name: bladder
-target: differentially diagnose urinary bladder cancer, cystitis, kidney cancer, prostate cancer, and uterus cancer based on clinical laboratory blood and urine test results and patient medical history
-desc: Clinical laboratory data of bladder cancer, cystitis, and other genitourinary/gynecological malignancies
+target: differentially diagnose 5 conditions — Cystitis (0), Kidney cancer (1), Prostate cancer (2), Urinary Bladder cancer (3), and Uterus cancer (4) — using blood tests, urinalysis, and demographics. Key clinical rules include that Prostate cancer (2) only occurs in males (gender = 1), Uterus cancer (4) only occurs in females (gender = 0), Urine epitheilum (UL) and Urine occult Blood are strongly elevated/present in Urinary Bladder (3) and Kidney (1) cancers, and age/Alk/Creatinine/Urine epithelium count help further separate these conditions
+desc: Clinical laboratory data of bladder cancer, cystitis, kidney cancer, prostate cancer, and uterus cancer with natural missing values
 label_meaning: clinical diagnosis
 features:
   - name: A/G Ratio
-    desc: Albumin to Globulin ratio in blood serum
+    desc: Albumin to Globulin ratio in blood serum (typical range 0.3 to 3.2, median 1.7; thresholds around 1.5, 1.8)
     type: float
   - name: Albumin
-    desc: Serum albumin concentration (g/dL)
+    desc: Serum albumin concentration in g/dL (range 1.8 to 5.5, median 4.2; thresholds around 3.8, 4.2)
     type: float
   - name: Alk
-    desc: Serum alkaline phosphatase (ALP) level (U/L)
+    desc: Serum alkaline phosphatase (ALP) in U/L (range 16 to 972, median 68; thresholds around 60, 75, 100)
     type: float
   - name: ALT (GPT)
-    desc: Alanine aminotransferase / glutamic pyruvic transaminase in blood (U/L)
+    desc: Alanine aminotransferase in U/L (range 4 to 561, median 21; thresholds around 20, 35)
     type: float
   - name: AST (GOT)
-    desc: Aspartate aminotransferase / glutamic oxaloacetic transaminase in blood (U/L)
+    desc: Aspartate aminotransferase in U/L (range 5 to 7024, median 23; thresholds around 20, 30)
     type: float
   - name: BUN
-    desc: Blood urea nitrogen concentration (mg/dL)
+    desc: Blood urea nitrogen in mg/dL (range 2 to 285, median 15; thresholds around 14, 20)
     type: float
   - name: Calcium
-    desc: Serum calcium concentration (mg/dL)
+    desc: Serum calcium concentration in mg/dL (range 4.0 to 13.7, median 9.0; thresholds around 8.8, 9.3)
     type: float
   - name: Chloride
-    desc: Serum chloride concentration (mmol/L)
+    desc: Serum chloride concentration in mmol/L (range 85 to 126, median 105; thresholds around 103, 107)
     type: float
   - name: Creatinine
-    desc: Serum creatinine concentration (mg/dL)
+    desc: Serum creatinine in mg/dL, elevated in kidney and bladder pathology (range 0.3 to 18.8, median 1.0; thresholds around 0.9, 1.2, 1.5)
     type: float
   - name: Direct Bilirubin
-    desc: Conjugated (direct) bilirubin concentration in blood (mg/dL)
+    desc: Direct bilirubin in mg/dL (range 0.0 to 11.8, median 0.1; thresholds around 0.15, 0.3)
     type: float
   - name: Estimated GFR
-    desc: Estimated glomerular filtration rate (mL/min/1.73m2)
+    desc: Estimated glomerular filtration rate in mL/min/1.73m2 (range 2.6 to 305, median 72.7; thresholds around 60, 75, 90)
     type: float
   - name: Glucose AC
-    desc: Fasting blood glucose (ante cibum) concentration (mg/dL)
+    desc: Fasting blood glucose in mg/dL (range 51 to 2138, median 108; thresholds around 100, 126)
     type: float
   - name: Nitrite
-    desc: Urine nitrite dipstick test result (0 = negative, >0 = positive)
+    desc: Urine nitrite dipstick result (0 = negative, 0.5 or 1 = positive for urinary infection/cystitis; threshold 0.5)
     type: float
   - name: Urine occult Blood
-    desc: Urine occult blood dipstick severity score (0 = negative, 0.5 to 4 = trace to 4+)
+    desc: Urine occult blood dipstick score, a primary marker of hematuria in bladder and kidney cancer (range 0 to 3, median 0.5; thresholds 0.5, 1.5, 2.5)
     type: float
   - name: pH
-    desc: Urine pH level
+    desc: Urine pH level (range 5.0 to 9.0, median 6.0; thresholds around 6.0, 6.5)
     type: float
   - name: Potassium
-    desc: Serum potassium concentration (mmol/L)
+    desc: Serum potassium in mmol/L (range 1.5 to 7.5, median 4.1; thresholds around 3.8, 4.3)
     type: float
   - name: Sodium
-    desc: Serum sodium concentration (mmol/L)
+    desc: Serum sodium in mmol/L (range 120 to 156, median 139; thresholds around 137, 140)
     type: float
   - name: Specific Gravity
-    desc: Urine specific gravity
+    desc: Urine specific gravity (range 1.001 to 1.050, median 1.016; thresholds around 1.012, 1.020)
     type: float
   - name: Strip WBC
-    desc: Urine leukocyte esterase / white blood cell dipstick strip score (0 = negative, 0.5 to 3 = trace to 3+)
+    desc: Urine leukocyte esterase / WBC strip score (range 0 to 3, median 0.5; thresholds 0.5, 1.5)
     type: float
   - name: Total Bilirubin
-    desc: Total serum bilirubin concentration (mg/dL)
+    desc: Total serum bilirubin in mg/dL (range 0.0 to 29.2, median 0.8; thresholds around 0.6, 1.0)
     type: float
   - name: Total Cholesterol
-    desc: Total serum cholesterol concentration (mg/dL)
+    desc: Total serum cholesterol in mg/dL (range 60 to 423, median 187; thresholds around 170, 200)
     type: float
   - name: Total Protein
-    desc: Total serum protein concentration (g/dL)
+    desc: Total serum protein in g/dL (range 3.5 to 9.1, median 6.7; thresholds around 6.4, 7.0)
     type: float
   - name: Triglyceride
-    desc: Serum triglyceride concentration (mg/dL)
+    desc: Serum triglyceride in mg/dL (range 23 to 2086, median 111; thresholds around 100, 150)
     type: float
   - name: Urine epitheilum (UL)
-    desc: Urine epithelial cell concentration (/uL)
+    desc: Urine epithelial cell count per uL, recorded almost exclusively in UrinaryBladder and Kidney cancer patients and missing/NaN in Cystitis, Prostate, and Uterus patients (range 0 to 186, median 3.0; thresholds 1.0, 5.0, 20.0, 100.0)
     type: float
   - name: Urine epithelium count
-    desc: Urine epithelial cell count per high-power field (/HPF)
+    desc: Urine epithelial cell count per HPF (range 0 to 74, median 1.0; thresholds 0.5, 1.5, 3.5)
     type: float
   - name: Uric acid
-    desc: Serum uric acid concentration (mg/dL)
+    desc: Serum uric acid in mg/dL (range 1.0 to 24.7, median 5.9; thresholds around 5.5, 6.5)
     type: float
   - name: Urine Bilirubin
-    desc: Urine bilirubin dipstick score (0 = negative, 0.5 to 3 = trace to 3+)
+    desc: Urine bilirubin score (range 0 to 3; threshold 0.5)
     type: float
   - name: Urine Glucose
-    desc: Urine glucose dipstick score (0 = negative, 0.5 to 4 = trace to 4+)
+    desc: Urine glucose score (range 0 to 3; threshold 0.5)
     type: float
   - name: Urine Ketone
-    desc: Urine ketone dipstick score (0 = negative, 0.5 to 4 = trace to 4+)
+    desc: Urine ketone score (range 0 to 3; threshold 0.5)
     type: float
   - name: Urine Protein
-    desc: Urine protein dipstick score (0 = negative, 0.5 to 4 = trace to 4+)
+    desc: Urine protein dipstick score, elevated in Kidney and UrinaryBladder disease (range 0 to 3, median 0.0; thresholds 0.5, 1.5)
     type: float
   - name: Urobilinogen
-    desc: Urine urobilinogen concentration (mg/dL)
+    desc: Urine urobilinogen in mg/dL (range 0.1 to 4.0, median 0.2; thresholds 0.15, 0.5)
     type: float
   - name: age
-    desc: Patient age (years)
+    desc: Patient age in years; Prostate cancer patients are older on average (~72 yrs) than Uterus/Cystitis (~60 yrs) and Bladder (~67 yrs) (range 31 to 80, median 67; thresholds 60, 65, 70)
     type: int
   - name: gender
-    desc: Patient biological sex (0 = female, 1 = male)
+    desc: Patient biological sex (0 = female, 1 = male). Crucial diagnostic split because Prostate cancer (2) only occurs in males (1) and Uterus cancer (4) only occurs in females (0)
     type: categorical
     categories:
-      "0": "female (0)"
-      "1": "male (1)"
+      "0": "female (excludes Prostate cancer)"
+      "1": "male (excludes Uterus cancer)"
   - name: Hyper1en1ion
     desc: History of hypertension (0 = no, 1 = yes)
     type: categorical
     categories:
-      "0": "no (0)"
-      "1": "yes (1)"
+      "0": "no"
+      "1": "yes"
   - name: Diabe1es
     desc: History of diabetes mellitus (0 = no, 1 = yes)
     type: categorical
     categories:
-      "0": "no (0)"
-      "1": "yes (1)"
+      "0": "no"
+      "1": "yes"
   - name: Smoking
-    desc: History of smoking (0 = no, 1 = yes)
+    desc: History of tobacco smoking, a known risk factor for bladder cancer (0 = no, 1 = yes)
     type: categorical
     categories:
-      "0": "no (0)"
-      "1": "yes (1)"
+      "0": "no"
+      "1": "yes"
   - name: Drinking
     desc: History of alcohol consumption (0 = no, 1 = yes)
     type: categorical
     categories:
-      "0": "no (0)"
-      "1": "yes (1)"
+      "0": "no"
+      "1": "yes"
   - name: Bee1leNu1
     desc: History of betel nut chewing (0 = no, 1 = yes)
     type: categorical
     categories:
-      "0": "no (0)"
-      "1": "yes (1)"
+      "0": "no"
+      "1": "yes"
   - name: FamilyHis1ory
     desc: Family history of cancer (0 = no, 1 = yes)
     type: categorical
     categories:
-      "0": "no (0)"
-      "1": "yes (1)"
+      "0": "no"
+      "1": "yes"
 labels:
   - name: Cystitis
     value: 0
-    desc: the patient has cystitis (benign urinary bladder inflammation)
+    desc: benign urinary bladder inflammation (males or females, younger average age ~60, Urine epitheilum (UL) is missing/not elevated)
   - name: Kidney
     value: 1
-    desc: the patient has kidney cancer (renal cell carcinoma)
+    desc: kidney cancer / renal cell carcinoma (males or females, Urine epitheilum (UL) is present/measured, often elevated Urine Protein and Creatinine)
   - name: Prostate
     value: 2
-    desc: the patient has prostate cancer
+    desc: prostate cancer (exclusively males gender = 1, older average age ~72, Urine epitheilum (UL) typically missing)
   - name: UrinaryBladder
     value: 3
-    desc: the patient has urinary bladder cancer
+    desc: urinary bladder cancer (the most common diagnosis, males or females, Urine epitheilum (UL) is present/measured, often positive Urine occult Blood / hematuria)
   - name: Uterus
     value: 4
-    desc: the patient has uterus cancer
+    desc: uterus cancer (exclusively females gender = 0, lower Creatinine, Urine epitheilum (UL) is missing)
